@@ -45,7 +45,7 @@ MyVector<T>::MyVector(const T& _vector)
 {
 	v_size = _vector.size;
 	v_capacity = _vector.capacity;
-	Data = new T[v_size];
+	Data = new T[v_capacity];
 	for (unsigned int i = 0; i < v_size; ++i)
 	{
 		Data[i] = _vector.Data[i];
@@ -63,7 +63,7 @@ MyVector<T>::~MyVector()
 template <typename T>
 void MyVector<T>::PushBack(const T& _value)
 {
-	if (v_size >= v_capacity)
+	if (v_size >= v_capacity && v_size > 0)
 	{
 		int newCapacity = v_capacity + 1;
 		T* newDataForVector = new T[newCapacity];
@@ -86,7 +86,7 @@ void MyVector<T>::PushBack(const T& _value)
 template<typename T>
 inline void MyVector<T>::Insert(const T& _value, const int& _index)
 {
-	if (v_size >= v_capacity)
+	if (v_size >= v_capacity && v_size > 0)
 	{
 		int newCapacity = v_capacity + 1;
 		T* TempVector = new T[newCapacity];
@@ -111,19 +111,22 @@ inline void MyVector<T>::Insert(const T& _value, const int& _index)
 template<typename T>
 inline void MyVector<T>::Remove(const T& _value)
 {
-	T* TempVector = new T[v_capacity - 1];
-	int AmountToAdd = 0;
-	//Iterate from the removed index and swap the ones behind it
-	for (int i = 0; i < v_size; i++)
+	if (v_size >= v_capacity && v_size > 0)
 	{
-		if (Data[i] != _value)
+		T* TempVector = new T[v_capacity - 1];
+		int AmountToAdd = 0;
+		//Iterate from the removed index and swap the ones behind it
+		for (int i = 0; i < v_size; i++)
 		{
-			TempVector[AmountToAdd] = Data[i];
-			AmountToAdd++;
+			if (Data[i] != _value)
+			{
+				TempVector[AmountToAdd] = Data[i];
+				AmountToAdd++;
+			}
 		}
+		Data = TempVector;
+		v_size = AmountToAdd;
 	}
-	Data = TempVector;
-	v_size = AmountToAdd;
 }
 
 //erase entire Vector
