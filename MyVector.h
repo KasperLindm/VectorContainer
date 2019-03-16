@@ -3,8 +3,6 @@ class MyVector
 {
 public:
 	T* Data;
-	int v_size;
-	int v_capacity;
 
 	//if nothing is defined set everything to null
 	MyVector();
@@ -25,12 +23,21 @@ public:
 
 	int GetSize();
 
+	typedef T* iterator;
+	iterator begin() { return &Data[0]; }
+	iterator end() { return &Data[v_size]; }
+
+private:
+	int v_size;
+	int v_capacity;
 };
 
 template<typename T>
 MyVector<T>::MyVector()
 {
-
+	v_size = 0;
+	v_capacity = 0;
+	Data = new T[v_capacity];
 }
 
 template<typename T>
@@ -38,7 +45,7 @@ MyVector<T>::MyVector(const T& _vector)
 {
 	v_size = _vector.size;
 	v_capacity = _vector.capacity;
-	Data = new T[v_capacity];
+	Data = new T[v_size];
 	for (unsigned int i = 0; i < v_size; ++i)
 	{
 		Data[i] = _vector.Data[i];
@@ -49,22 +56,23 @@ template<typename T>
 MyVector<T>::~MyVector()
 {
 	delete[] Data;
+	Data = nullptr;
 }
 
 //Place it as far back as possible
-
 template <typename T>
 void MyVector<T>::PushBack(const T& _value)
 {
 	if (v_size >= v_capacity)
 	{
-		int newCapacity = 1 << v_capacity;
+		int newCapacity = v_capacity + 1;
 		T* newDataForVector = new T[newCapacity];
 
-		for (unsigned int i = 0; i < v_size; ++i)
+		for (int i = 0; i < v_size; ++i)
 		{
 			newDataForVector[i] = Data[i];
 		}
+
 		v_capacity = newCapacity;
 		delete[] Data;
 		Data = newDataForVector;
@@ -78,23 +86,32 @@ void MyVector<T>::PushBack(const T& _value)
 template<typename T>
 inline void MyVector<T>::Insert(const T& _value, const int& _index)
 {
-	v_size++;
-	T* TempVector = new T[v_size];
-	TempVector = Data;
-
-	for (int i = _index + 1; i < v_size; i++)
+	if (v_size >= v_capacity)
 	{
-		TempVector[i] = Data[i - 1];
+		int newCapacity = v_capacity + 1;
+		T* TempVector = new T[newCapacity];
+
+		for (int i = 0; i < _index; i++)
+		{
+			TempVector[i] = Data[i];
+
+		}
+		TempVector[_index] = _value;
+		for (int i = _index; i < v_size; i++)
+		{
+			TempVector[i + 1] = Data[i];
+
+		}
+		Data = TempVector;
+		v_size++;
 	}
-	TempVector[_index] = _value;
-	Data = TempVector;
 }
 
 //remove specific value and shift all values after back
 template<typename T>
 inline void MyVector<T>::Remove(const T& _value)
 {
-	T* TempVector = new T[v_size];
+	T* TempVector = new T[v_capacity - 1];
 	int AmountToAdd = 0;
 	//Iterate from the removed index and swap the ones behind it
 	for (int i = 0; i < v_size; i++)
@@ -105,8 +122,8 @@ inline void MyVector<T>::Remove(const T& _value)
 			AmountToAdd++;
 		}
 	}
-	v_size = AmountToAdd;
 	Data = TempVector;
+	v_size = AmountToAdd;
 }
 
 //erase entire Vector
@@ -125,4 +142,3 @@ int MyVector<T>::GetSize()
 {
 	return v_size;
 }
-
