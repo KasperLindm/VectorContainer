@@ -63,7 +63,7 @@ MyVector<T>::~MyVector()
 template <typename T>
 void MyVector<T>::PushBack(const T& _value)
 {
-	if (v_size >= v_capacity && v_size > 0)
+	if (v_size >= v_capacity)
 	{
 		int newCapacity = v_capacity + 1;
 		T* newDataForVector = new T[newCapacity];
@@ -86,7 +86,7 @@ void MyVector<T>::PushBack(const T& _value)
 template<typename T>
 inline void MyVector<T>::Insert(const T& _value, const int& _index)
 {
-	if (v_size >= v_capacity && v_size > 0)
+	if (v_size >= v_capacity)
 	{
 		int newCapacity = v_capacity + 1;
 		T* TempVector = new T[newCapacity];
