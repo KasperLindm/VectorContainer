@@ -62,7 +62,6 @@ MyVector<T>::MyVector(const T& _vector)
 	v_size = _vector.size;
 	v_capacity = _vector.capacity;
 	Data = new T[v_capacity];
-
 	for (unsigned int i = 0; i < v_size; ++i)
 	{
 		Data[i] = _vector.Data[i];
