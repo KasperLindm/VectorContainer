@@ -10,7 +10,7 @@ public:
 	MyVector();
 
 	//overload constructor If size is defined
-	MyVector(const T& _vector);
+	MyVector(const int VecSize);
 
 	//Destructor
 	~MyVector();
@@ -57,14 +57,14 @@ MyVector<T>::MyVector()
 }
 
 template<typename T>
-MyVector<T>::MyVector(const T& _vector)
+MyVector<T>::MyVector(const int VecSize)
 {
-	v_size = _vector.size;
-	v_capacity = _vector.capacity;
+	v_size = _vector;
+	v_capacity = _vector;
 	Data = new T[v_capacity];
 	for (unsigned int i = 0; i < v_size; ++i)
 	{
-		Data[i] = _vector.Data[i];
+		Data[i] = 0;
 	}
 }
 
@@ -121,7 +121,7 @@ inline void MyVector<T>::Insert(const T& _value, const int& _index)
 template<typename T>
 inline void MyVector<T>::Remove(const T& _value)
 {
-	if (v_size >= v_capacity && v_size > 0)
+	if (v_size >= v_capacity)
 	{
 		T* TempVector = new T[v_capacity - 1];
 		int AmountToAdd = 0;
