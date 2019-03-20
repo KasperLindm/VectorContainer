@@ -35,9 +35,7 @@ public:
 		{
 			throw std::out_of_range("index is out");
 		}
-
 		return Data[index];
-
 	}
 
 	T operator[](int index) const
@@ -46,12 +44,9 @@ public:
 		{
 			throw std::out_of_range("index is out");
 		}
-
 		return Data[index];
 	}
-
 };
-
 
 template<typename T>
 MyVector<T>::MyVector()
@@ -67,6 +62,7 @@ MyVector<T>::MyVector(const T& _vector)
 	v_size = _vector.size;
 	v_capacity = _vector.capacity;
 	Data = new T[v_capacity];
+
 	for (unsigned int i = 0; i < v_size; ++i)
 	{
 		Data[i] = _vector.Data[i];
@@ -80,7 +76,7 @@ MyVector<T>::~MyVector()
 	Data = nullptr;
 }
 
-//Place it as far back as possible
+//Place _value as far back as possible
 template <typename T>
 void MyVector<T>::PushBack(const T& _value)
 {
@@ -88,12 +84,10 @@ void MyVector<T>::PushBack(const T& _value)
 	{
 		int newCapacity = v_capacity + 1;
 		T* newDataForVector = new T[newCapacity];
-
 		for (int i = 0; i < v_size; ++i)
 		{
 			newDataForVector[i] = Data[i];
 		}
-
 		v_capacity = newCapacity;
 		delete[] Data;
 		Data = newDataForVector;
@@ -102,8 +96,7 @@ void MyVector<T>::PushBack(const T& _value)
 	}
 }
 
-
-//Insert on the first place it finds or expands vector
+//Insert _value on the first place it finds or expands vector
 template<typename T>
 inline void MyVector<T>::Insert(const T& _value, const int& _index)
 {
@@ -111,24 +104,21 @@ inline void MyVector<T>::Insert(const T& _value, const int& _index)
 	{
 		int newCapacity = v_capacity + 1;
 		T* TempVector = new T[newCapacity];
-
 		for (int i = 0; i < _index; i++)
 		{
 			TempVector[i] = Data[i];
-
 		}
 		TempVector[_index] = _value;
 		for (int i = _index; i < v_size; i++)
 		{
 			TempVector[i + 1] = Data[i];
-
 		}
 		Data = TempVector;
 		v_size++;
 	}
 }
 
-//remove specific value and shift all values after back
+//remove specific _value's and shift all values after back
 template<typename T>
 inline void MyVector<T>::Remove(const T& _value)
 {
@@ -136,7 +126,6 @@ inline void MyVector<T>::Remove(const T& _value)
 	{
 		T* TempVector = new T[v_capacity - 1];
 		int AmountToAdd = 0;
-		//Iterate from the removed index and swap the ones behind it
 		for (int i = 0; i < v_size; i++)
 		{
 			if (Data[i] != _value)
@@ -150,7 +139,7 @@ inline void MyVector<T>::Remove(const T& _value)
 	}
 }
 
-//erase entire Vector
+//erase entire vector
 template<typename T>
 inline void MyVector<T>::Erase()
 {
