@@ -3,6 +3,8 @@ class MyVector
 {
 public:
 	T* Data;
+	int v_size;
+	int v_capacity;
 
 	//if nothing is defined set everything to null
 	MyVector();
@@ -27,10 +29,29 @@ public:
 	iterator begin() { return &Data[0]; }
 	iterator end() { return &Data[v_size]; }
 
-private:
-	int v_size;
-	int v_capacity;
+	T& operator[](int index)
+	{
+		if (index > v_capacity)
+		{
+			throw std::out_of_range("index is out");
+		}
+
+		return Data[index];
+
+	}
+
+	T operator[](int index) const
+	{
+		if (index > v_capacity)
+		{
+			throw std::out_of_range("index is out");
+		}
+
+		return Data[index];
+	}
+
 };
+
 
 template<typename T>
 MyVector<T>::MyVector()
@@ -76,9 +97,9 @@ void MyVector<T>::PushBack(const T& _value)
 		v_capacity = newCapacity;
 		delete[] Data;
 		Data = newDataForVector;
+		Data[v_size] = _value;
+		v_size++;
 	}
-	Data[v_size] = _value;
-	v_size++;
 }
 
 
@@ -136,7 +157,6 @@ inline void MyVector<T>::Erase()
 	delete Data;
 	Data = nullptr;
 	v_size = 0;
-
 }
 
 //Return the size of the vector
