@@ -23,6 +23,8 @@ public:
 
 	void Erase();
 
+	void CheckCap();
+
 	int GetSize();
 
 	typedef T* iterator;
@@ -33,7 +35,7 @@ public:
 	{
 		if (index > v_capacity)
 		{
-			throw std::out_of_range("index is out");
+			throw std::out_of_range("index is out of range");
 		}
 		return Data[index];
 	}
@@ -42,7 +44,7 @@ public:
 	{
 		if (index > v_capacity)
 		{
-			throw std::out_of_range("index is out");
+			throw std::out_of_range("index is out of range");
 		}
 		return Data[index];
 	}
@@ -52,15 +54,15 @@ template<typename T>
 MyVector<T>::MyVector()
 {
 	v_size = 0;
-	v_capacity = 0;
+	v_capacity = 1;
 	Data = new T[v_capacity];
 }
 
 template<typename T>
 MyVector<T>::MyVector(const int VecSize)
 {
-	v_size = _vector;
-	v_capacity = _vector;
+	v_size = VecSize;
+	v_capacity = VecSize * 2;
 	Data = new T[v_capacity];
 	for (unsigned int i = 0; i < v_size; ++i)
 	{
@@ -79,63 +81,54 @@ MyVector<T>::~MyVector()
 template <typename T>
 void MyVector<T>::PushBack(const T& _value)
 {
-	if (v_size >= v_capacity)
+	CheckCap();
+	T* newDataForVector = new T[v_capacity];
+	for (int i = 0; i < v_size; ++i)
 	{
-		int newCapacity = v_capacity + 1;
-		T* newDataForVector = new T[newCapacity];
-		for (int i = 0; i < v_size; ++i)
-		{
-			newDataForVector[i] = Data[i];
-		}
-		v_capacity = newCapacity;
-		delete[] Data;
-		Data = newDataForVector;
-		Data[v_size] = _value;
-		v_size++;
+		newDataForVector[i] = Data[i];
 	}
+	delete[] Data;
+	Data = newDataForVector;
+	Data[v_size] = _value;
+	v_size++;
 }
 
 //Insert _value on the first place it finds or expands vector
 template<typename T>
 inline void MyVector<T>::Insert(const T& _value, const int& _index)
 {
-	if (v_size >= v_capacity)
+
+	CheckCap();
+	T* TempVector = new T[v_capacity];
+	for (int i = 0; i < _index; i++)
 	{
-		int newCapacity = v_capacity + 1;
-		T* TempVector = new T[newCapacity];
-		for (int i = 0; i < _index; i++)
-		{
-			TempVector[i] = Data[i];
-		}
-		TempVector[_index] = _value;
-		for (int i = _index; i < v_size; i++)
-		{
-			TempVector[i + 1] = Data[i];
-		}
-		Data = TempVector;
-		v_size++;
+		TempVector[i] = Data[i];
 	}
+	TempVector[_index] = _value;
+	for (int i = _index; i < v_size; i++)
+	{
+		TempVector[i + 1] = Data[i];
+	}
+	Data = TempVector;
+	v_size++;
 }
 
 //remove specific _value's and shift all values after back
 template<typename T>
 inline void MyVector<T>::Remove(const T& _value)
 {
-	if (v_size >= v_capacity)
+	T* TempVector = new T[v_capacity];
+	int AmountToAdd = 0;
+	for (int i = 0; i < v_size; i++)
 	{
-		T* TempVector = new T[v_capacity - 1];
-		int AmountToAdd = 0;
-		for (int i = 0; i < v_size; i++)
+		if (Data[i] != _value)
 		{
-			if (Data[i] != _value)
-			{
-				TempVector[AmountToAdd] = Data[i];
-				AmountToAdd++;
-			}
+			TempVector[AmountToAdd] = Data[i];
+			AmountToAdd++;
 		}
-		Data = TempVector;
-		v_size = AmountToAdd;
 	}
+	v_size = AmountToAdd;
+	Data = TempVector;
 }
 
 //erase entire vector
@@ -145,6 +138,16 @@ inline void MyVector<T>::Erase()
 	delete Data;
 	Data = nullptr;
 	v_size = 0;
+}
+
+//doubles capacity if size exceeds capacity
+template<typename T>
+void MyVector<T>::CheckCap()
+{
+	if (v_size >= v_capacity)
+	{
+		v_capacity *= 2;
+	}
 }
 
 //Return the size of the vector
