@@ -1,25 +1,29 @@
+#pragma once
+#include <cassert>
+
 template <typename T>
 class MyVector
 {
 public:
-	T* Data;
-	int v_size;
-	int v_capacity;
+	T* data;
+	int size = 0;
+	int capacity = 1;
 
 	//if nothing is defined set everything to null
 	MyVector();
 
-	//overload constructor If size is defined
-	MyVector(const int VecSize);
-
 	//Destructor
 	~MyVector();
 
-	void PushBack(const T& _value);
+	void PushBack(const T& value);
 
-	void Insert(const T& _value, const int& _index);
+	void Insert(const T& value, const int& index);
 
-	void Remove(const T& _value);
+	void Swap(int firstIndex, int secondIndex);
+
+	void RemoveAt(int index);
+
+	void RemoveValue(const T& value);
 
 	void Erase();
 
@@ -28,125 +32,105 @@ public:
 	int GetSize();
 
 	typedef T* iterator;
-	iterator begin() { return &Data[0]; }
-	iterator end() { return &Data[v_size]; }
+	iterator begin() { return &data[0]; }
+	iterator end() { return &data[size]; }
 
 	T& operator[](int index)
 	{
-		if (index > v_capacity)
+		if (index > capacity)
 		{
 			throw std::out_of_range("index is out of range");
 		}
-		return Data[index];
+		return data[index];
 	}
 
 	T operator[](int index) const
 	{
-		if (index > v_capacity)
+		if (index > capacity)
 		{
 			throw std::out_of_range("index is out of range");
 		}
-		return Data[index];
+		return data[index];
 	}
 };
 
 template<typename T>
 MyVector<T>::MyVector()
-{
-	v_size = 0;
-	v_capacity = 1;
-	Data = new T[v_capacity];
-}
-
-template<typename T>
-MyVector<T>::MyVector(const int VecSize)
-{
-	v_size = VecSize;
-	v_capacity = VecSize * 2;
-	Data = new T[v_capacity];
-	for (unsigned int i = 0; i < v_size; ++i)
-	{
-		Data[i] = 0;
-	}
-}
+	: data(new T[capacity])
+{}
 
 template<typename T>
 MyVector<T>::~MyVector()
-{
-	delete[] Data;
-	Data = nullptr;
-}
+{}
 
 //Place _value as far back as possible
 template <typename T>
-void MyVector<T>::PushBack(const T& _value)
+void MyVector<T>::PushBack(const T& value)
 {
 	CheckCap();
-	T* newDataForVector = new T[v_capacity];
-	for (int i = 0; i < v_size; ++i)
-	{
-		newDataForVector[i] = Data[i];
-	}
-	delete[] Data;
-	Data = newDataForVector;
-	Data[v_size] = _value;
-	v_size++;
+	data[size] = value;
+	size++;
 }
 
 //Insert _value on the first place it finds or expands vector
 template<typename T>
-inline void MyVector<T>::Insert(const T& _value, const int& _index)
+inline void MyVector<T>::Insert(const T& value, const int& index)
 {
-
+	assert(index < capacity);
 	CheckCap();
-	T* TempVector = new T[v_capacity];
-	for (int i = 0; i < _index; i++)
-	{
-		TempVector[i] = Data[i];
-	}
-	TempVector[_index] = _value;
-	for (int i = _index; i < v_size; i++)
-	{
-		TempVector[i + 1] = Data[i];
-	}
-	Data = TempVector;
-	v_size++;
+	PushBack(value);
+	Swap(data[index], size - 1);
 }
 
 //remove specific _value's and shift all values after back
 template<typename T>
-inline void MyVector<T>::Remove(const T& _value)
+inline void MyVector<T>::RemoveValue(const T& value)
 {
-	T* TempVector = new T[v_capacity];
-	int AmountToAdd = 0;
-	for (int i = 0; i < v_size; i++)
+	T* tempVector = new T[capacity];
+	int amountToAdd = 0;
+	for (int i = 0; i < size; i++)
 	{
-		if (Data[i] != _value)
+		if (data[i] != value)
 		{
-			TempVector[AmountToAdd] = Data[i];
-			AmountToAdd++;
+			tempVector[amountToAdd] = data[i];
+			amountToAdd++;
 		}
 	}
-	v_size = AmountToAdd;
-	Data = TempVector;
+	size = amountToAdd;
+	data = tempVector;
+}
+
+template <typename T>
+void MyVector<T>::Swap(int firstIndex, int secondIndex)
+{
+	//assert(firstIndex && secondIndex && "First or second index out of range");
+	T temp = data[firstIndex];
+	data[firstIndex] = data[secondIndex];
+	data[secondIndex] = temp;
+}
+
+template <typename T>
+void MyVector<T>::RemoveAt(int index)
+{
+	//assert(index && "index out of range");
+	Swap(index, size - 1);
+	size--;
 }
 
 //erase entire vector
 template<typename T>
 inline void MyVector<T>::Erase()
 {
-	delete Data;
-	Data = nullptr;
-	v_size = 0;
+	~MyVector();
 }
 
 //doubles capacity if size exceeds capacity
 template<typename T>
 void MyVector<T>::CheckCap()
 {
-	if (v_size >= v_capacity)
+	if (size >= capacity)
 	{
-		v_capacity *= 2;
+		capacity *= 2;
 	}
 }
 
@@ -154,5 +138,5 @@ void MyVector<T>::CheckCap()
 template<typename T>
 int MyVector<T>::GetSize()
 {
-	return v_size;
+	return size;
 }
