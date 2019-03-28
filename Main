@@ -1,0 +1,42 @@
+#include "pch.h"
+#include "Header.h"
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+	MyVector<int> VECTOR;
+	int SIZE = VECTOR.GetSize();
+	VECTOR.PushBack(0);
+	VECTOR.PushBack(1);
+	VECTOR.PushBack(3);
+	VECTOR.PushBack(5);
+	VECTOR.PushBack(7);
+	VECTOR.PushBack(17);
+
+	for (int i = 0; i < VECTOR.GetSize(); i++)
+	{
+		cout << VECTOR[i] << endl;
+	}
+
+	VECTOR.Insert(15, 1);
+
+	cout << "insert" << endl;
+
+	for (auto it : VECTOR)
+	{
+		cout << it << endl;
+	}
+
+	VECTOR.RemoveAt(0);
+	VECTOR.RemoveValue(15);
+
+	cout << "removed" << endl;
+
+	for (auto it : VECTOR)
+	{
+		cout << it << endl;
+	}
+	cin;
+}
