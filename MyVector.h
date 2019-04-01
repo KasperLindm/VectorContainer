@@ -85,7 +85,7 @@ void MyVector<T>::PushBack(const T& value)
 template<typename T>
 inline void MyVector<T>::Insert(const T& value, int index)
 {
-	assert(index && "index out of range in insert");
+	assert(index <= size && "index out of range in insert");
 	PushBack(value);
 	Swap(data[index], size - 1); //Insert shouldn't typically swap, would make diff function for that
 }
@@ -111,7 +111,7 @@ inline void MyVector<T>::Remove(const T& value)
 template <typename T>
 void MyVector<T>::Swap(int firstIndex, int secondIndex)
 {
-	assert(firstIndex && secondIndex && "index out of range in Swap");
+	assert(firstIndex <= size && secondIndex <= size && "index out of range in Swap");
 	T temp = data[firstIndex];
 	data[firstIndex] = data[secondIndex];
 	data[secondIndex] = temp;
@@ -120,7 +120,7 @@ void MyVector<T>::Swap(int firstIndex, int secondIndex)
 template <typename T>
 void MyVector<T>::RemoveAt(int index) //Should be called swapToRemoveAt
 {
-	assert(index && "index out of range in RemoveAt");
+	assert(index <= size && "index out of range in RemoveAt");
 	Swap(index, --size);
 }
 
