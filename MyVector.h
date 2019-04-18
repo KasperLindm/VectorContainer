@@ -4,13 +4,17 @@
 template <typename T>
 class MyVector
 {
-public:
+private:
+	T* data;
+	int size = 0;
+	int capacity = 1;
 
+public:
 	//If nothing is defined set everything to null
 	MyVector();
 
 	//Copy constructor
-	MyVector(const T& _vector);
+	MyVector(const T& vectorData);
 
 	//Destructor
 	~MyVector();
@@ -27,9 +31,13 @@ public:
 
 	void Erase();
 
-	void CheckCap();
+	void Sort();
 
-	const int GetSize(); //can be const and called just size()
+	void Search(T& TToFind, T& Left, T& Right);
+
+	void IncreaseCap();
+
+	const int Size();
 
 	typedef T* iterator;
 	iterator begin() { return &data[0]; }
@@ -46,11 +54,6 @@ public:
 		assert(index <= size && "index out of range In [] const");
 		return data[index];
 	}
-
-private:
-	T* data;
-	int size = 0;
-	int capacity = 1;
 };
 
 template<typename T>
@@ -67,7 +70,7 @@ MyVector<T>::MyVector(const T& vectorData)
 
 //Need copy constructor
 template<typename T>
-MyVector<T>::~MyVector() //needs to delete your data or you get a mem leak
+MyVector<T>::~MyVector()
 {
 	delete[] data;
 }
@@ -76,7 +79,7 @@ MyVector<T>::~MyVector() //needs to delete your data or you get a mem leak
 template <typename T>
 void MyVector<T>::PushBack(const T& value)
 {
-	CheckCap();
+	IncreaseCap();
 	data[size] = value;
 	size++;
 }
@@ -86,15 +89,31 @@ template<typename T>
 inline void MyVector<T>::Insert(const T& value, int index)
 {
 	assert(index <= size && "index out of range in insert");
-	PushBack(value);
-	Swap(data[index], size - 1); //Insert shouldn't typically swap, would make diff function for that
+	if (size >= capacity)
+	{
+		int newCapacity = capacity + 1;
+		T* TempVector = new T[newCapacity];
+
+		for (int i = 0; i < index; i++)
+		{
+			TempVector[i] = data[i];
+
+		}
+		TempVector[index] = value;
+		for (int i = index; i < size; i++)
+		{
+			TempVector[i + 1] = data[i];
+		}
+		data = TempVector;
+		size++;
+	}
 }
 
 //remove specific value's and shift all values after back
 template<typename T>
 inline void MyVector<T>::Remove(const T& value)
 {
-	T* tempVector = new T[capacity]; //Shouldn't allocate new memory when removing something, never need to increase size for that
+	T* tempVector = new T[capacity];
 	int amountToAdd = 0;
 	for (int i = 0; i < size; i++)
 	{
@@ -131,7 +150,41 @@ inline void MyVector<T>::Erase()
 }
 
 template<typename T>
-void MyVector<T>::CheckCap() //Functions should only do one thing, so should have one function for checking cap and one for increasing cap, or just check cap in the function where you call increaseSize
+inline void MyVector<T>::Sort()
+{
+	for (int i = 0; i < (size - 1); i++)
+	{
+		for (int x = 0; x < size - 1; x++)
+		{
+			if (data[i] < data[x])
+			{
+				Swap(i, x);
+			}
+		}
+	}
+}
+
+template<typename T>
+inline void MyVector<T>::Search(T& TToFind, T& Left, T& Right)
+{
+	if (Left <= Right)
+	{
+		T mid = (Left + Right) / 2;
+
+		if (data[mid] == TToFind)
+			return mid;
+
+		if (TToFind <= data[mid])
+			return Search(data, 0, mid - 1, TToFind);
+
+		return Search(data, mid + 1, Right, TToFind);
+	}
+	return -1;
+}
+
+//Should reallocate memory if cap is reached
+template<typename T>
+void MyVector<T>::IncreaseCap()
 {
 	if (size >= capacity)
 	{
@@ -140,7 +193,7 @@ void MyVector<T>::CheckCap() //Functions should only do one thing, so should hav
 }
 
 template<typename T>
-const int MyVector<T>::GetSize()
+const int MyVector<T>::Size()
 {
 	return size;
 }
