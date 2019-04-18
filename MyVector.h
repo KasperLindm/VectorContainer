@@ -19,21 +19,21 @@ public:
 	//Destructor
 	~MyVector();
 
-	void PushBack(const T& value); //Would use small letter for all functions as begin and end has that
+	void PushBack(const T value); //Would use small letter for all functions as begin and end has that
 
-	void Insert(const T& value, int index);
+	void Insert(const T value, int index);
 
 	void Swap(int firstIndex, int secondIndex);
 
 	void RemoveAt(int index);
 
-	void Remove(const T& value);
+	void Remove(const T value);
 
 	void Erase();
 
 	void Sort();
 
-	void Search(T& TToFind, T& Left, T& Right);
+	int Search(T ValueToFind, T Left, T Right);
 
 	void IncreaseCap();
 
@@ -58,7 +58,7 @@ public:
 
 template<typename T>
 MyVector<T>::MyVector()
-	: data(new T[capacity])
+	: data(new T[capacity]())
 {}
 
 template<typename T>
@@ -72,22 +72,35 @@ MyVector<T>::MyVector(const T& vectorData)
 template<typename T>
 MyVector<T>::~MyVector()
 {
-	delete[] data;
+	//delete[] data;
 }
 
-//Place value as far back as possible
+//Place value as far back as possible, Try to not reallocate new memory
 template <typename T>
-void MyVector<T>::PushBack(const T& value)
+inline void MyVector<T>::PushBack(const T value)
 {
 	IncreaseCap();
+	T* newDataForVector = new T[capacity];
+
+	for (int i = 0; i < size; ++i)
+	{
+		newDataForVector[i] = data[i];
+	}
+
+	delete[] data;
+	data = newDataForVector;
 	data[size] = value;
+
 	size++;
+	//data[size] = value;
+	//size++;
 }
 
 //Insert value on the first place it finds or expands vector
 template<typename T>
-inline void MyVector<T>::Insert(const T& value, int index)
+inline void MyVector<T>::Insert(const T value, int index)
 {
+	//dont create a temp
 	assert(index <= size && "index out of range in insert");
 	if (size >= capacity)
 	{
@@ -111,7 +124,7 @@ inline void MyVector<T>::Insert(const T& value, int index)
 
 //remove specific value's and shift all values after back
 template<typename T>
-inline void MyVector<T>::Remove(const T& value)
+inline void MyVector<T>::Remove(const T value)
 {
 	T* tempVector = new T[capacity];
 	int amountToAdd = 0;
@@ -128,7 +141,7 @@ inline void MyVector<T>::Remove(const T& value)
 }
 
 template <typename T>
-void MyVector<T>::Swap(int firstIndex, int secondIndex)
+inline void MyVector<T>::Swap(int firstIndex, int secondIndex)
 {
 	assert(firstIndex <= size && secondIndex <= size && "index out of range in Swap");
 	T temp = data[firstIndex];
@@ -137,7 +150,7 @@ void MyVector<T>::Swap(int firstIndex, int secondIndex)
 }
 
 template <typename T>
-void MyVector<T>::RemoveAt(int index) //Should be called swapToRemoveAt
+inline void MyVector<T>::RemoveAt(int index) //Should be called swapToRemoveAt
 {
 	assert(index <= size && "index out of range in RemoveAt");
 	Swap(index, --size);
@@ -152,9 +165,9 @@ inline void MyVector<T>::Erase()
 template<typename T>
 inline void MyVector<T>::Sort()
 {
-	for (int i = 0; i < (size - 1); i++)
+	for (int i = 0; i < (size); i++)
 	{
-		for (int x = 0; x < size - 1; x++)
+		for (int x = 0; x < size; x++)
 		{
 			if (data[i] < data[x])
 			{
@@ -165,35 +178,50 @@ inline void MyVector<T>::Sort()
 }
 
 template<typename T>
-inline void MyVector<T>::Search(T& TToFind, T& Left, T& Right)
+inline int MyVector<T>::Search(T ValueToFind, T Left, T Right)
 {
-	if (Left <= Right)
+	if (Left < Right)
 	{
-		T mid = (Left + Right) / 2;
+		T Mid = (Left + Right) / 2;
 
-		if (data[mid] == TToFind)
-			return mid;
+		if (data[Mid] == ValueToFind)
+			return Mid;
 
-		if (TToFind <= data[mid])
-			return Search(data, 0, mid - 1, TToFind);
+		if (ValueToFind < data[Mid])
+			return Search(ValueToFind, Left, Mid);
 
-		return Search(data, mid + 1, Right, TToFind);
+		if (Left + 1 == Right)
+			return -1;
+
+		return Search(ValueToFind, Mid, Right);
 	}
 	return -1;
 }
 
 //Should reallocate memory if cap is reached
 template<typename T>
-void MyVector<T>::IncreaseCap()
+inline void MyVector<T>::IncreaseCap()
 {
 	if (size >= capacity)
 	{
 		capacity *= 2;
+
+		T* tempVector = new T[capacity];
+
+		int i = 0;
+		for (T* itr = begin(); itr < end(); itr++)
+		{
+			tempVector[i] = *itr;
+			i++;
+		}
+
+		delete[] data;
+		data = tempVector;
 	}
 }
 
 template<typename T>
-const int MyVector<T>::Size()
+inline const int MyVector<T>::Size()
 {
 	return size;
 }
