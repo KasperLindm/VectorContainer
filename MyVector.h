@@ -19,7 +19,7 @@ public:
 	//Destructor
 	~MyVector();
 
-	void PushBack(const T value); //Would use small letter for all functions as begin and end has that
+	void PushBack(const T value);
 
 	void Insert(const T value, int index);
 
@@ -68,11 +68,10 @@ MyVector<T>::MyVector(const T& vectorData)
 	data = vectorData;
 }
 
-//Need copy constructor
 template<typename T>
 MyVector<T>::~MyVector()
 {
-	//delete[] data;
+	
 }
 
 //Place value as far back as possible, Try to not reallocate new memory
@@ -92,8 +91,6 @@ inline void MyVector<T>::PushBack(const T value)
 	data[size] = value;
 
 	size++;
-	//data[size] = value;
-	//size++;
 }
 
 //Insert value on the first place it finds or expands vector
